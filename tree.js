@@ -10,9 +10,11 @@ function tree(arr = []) {
   const build = () => (_root = buildTree(_arr, 0, _arr.length - 1));
   const print = () => prettyPrint(_root);
   const insert = (value) => insertNode(value.isNode ? value : treeNode({ value }), _root);
-  const find = (value) => findNode(value, _root);
+  const find = (value) => findNode(value).node;
   const remove = (value) => removeNode(value);
-
+  const depth = (value) => findNode(value).depth;
+  const height = (value) => heightOfNode(findNode(value).node);
+  const isBalanced = () => checkBalance(_root);
   // Primary Functions
   const buildTree = (arr, lhs, rhs) => {
     if (lhs > rhs) return null;
@@ -39,10 +41,10 @@ function tree(arr = []) {
     if (!result.direction) result.node.count += 1;
     else result.node[result.direction] = node;
   };
-  const findNode = (value, currentNode) => {
-    if (!currentNode || value === currentNode.value) return currentNode;
-    else if (value < currentNode.value) return findNode(value, currentNode.left);
-    else if (value > currentNode.value) return findNode(value, currentNode.right);
+  const findNode = (value, currentNode = _root, depth = 0) => {
+    if (!currentNode || value === currentNode.value) return { node: currentNode, depth };
+    else if (value < currentNode.value) return findNode(value, currentNode.left, (depth += 1));
+    else if (value > currentNode.value) return findNode(value, currentNode.right, (depth += 1));
   };
   const removeNode = (value) => {
     let nodeToRemove = find(value);
@@ -118,6 +120,26 @@ function tree(arr = []) {
   const preOrder = (fn) => {};
   const postOrder = (fn) => {};
 
+  //
+  const heightOfNode = (node) => {
+    if (node === null) return -1;
+    else {
+      let leftHeight = heightOfNode(node.left);
+      let rightHeight = heightOfNode(node.right);
+      return Math.max(leftHeight, rightHeight) + 1;
+    }
+  };
+  const checkBalance = (root) => {
+    if (root === null) return true;
+    else {
+      let leftSubtree = heightOfNode(root.left);
+      let rightSubtree = heightOfNode(root.right);
+      if (Math.abs(leftSubtree - rightSubtree) > 1) return false;
+      else return checkBalance(root.left) && checkBalance(root.right);
+    }
+  };
+  const rebalance = () => {};
+
   return {
     get root() {
       return _root;
@@ -133,14 +155,8 @@ function tree(arr = []) {
     insert,
     find,
     remove,
+    height,
+    depth,
+    isBalanced,
   };
 }
-
-const testArr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 6345, 100, 70];
-
-const testTree = tree(testArr);
-testTree.build();
-testTree.insert(10);
-testTree.print();
-testTree.remove(9);
-testTree.print();
