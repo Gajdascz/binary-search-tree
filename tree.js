@@ -1,5 +1,6 @@
-import { node as treeNode } from "./node.js";
+import { node as treeNode } from "./nodes/treeNode.js";
 import { mergeSort } from "./mergeSort.js";
+import { queue } from "./queue.js";
 
 function tree(arr = []) {
   let _root = null;
@@ -75,16 +76,6 @@ function tree(arr = []) {
     }
     return nodes;
   }
-  const findParentNode = (value, currentNode = _root) => {
-    if (!currentNode || (!currentNode.left && !currentNode.right)) return null;
-    if (
-      (currentNode.left && value === currentNode.left.value) ||
-      (currentNode.right && value === currentNode.right.value)
-    )
-      return currentNode;
-    else if (currentNode.left && value < currentNode.value) return findParentNode(value, currentNode.left);
-    else if (currentNode.right && value > currentNode.value) return findParentNode(value, currentNode.right);
-  };
 
   // Primary Function Helpers
   const getSpotForNode = (value, currentNode = _root) => {
@@ -109,6 +100,23 @@ function tree(arr = []) {
     else if (parent.left === oldNode) parent.left = newNode;
     else parent.right = newNode;
   };
+  const findParentNode = (value, currentNode = _root) => {
+    if (!currentNode || (!currentNode.left && !currentNode.right)) return null;
+    if (
+      (currentNode.left && value === currentNode.left.value) ||
+      (currentNode.right && value === currentNode.right.value)
+    )
+      return currentNode;
+    else if (currentNode.left && value < currentNode.value) return findParentNode(value, currentNode.left);
+    else if (currentNode.right && value > currentNode.value) return findParentNode(value, currentNode.right);
+  };
+
+  // Traversal Functions
+  const iterativeLevelOrder = (fn) => {};
+  const recursiveLevelOrder = (fn) => {};
+  const inOrder = (fn) => {};
+  const preOrder = (fn) => {};
+  const postOrder = (fn) => {};
 
   return {
     get root() {
@@ -127,3 +135,12 @@ function tree(arr = []) {
     remove,
   };
 }
+
+const testArr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 6345, 100, 70];
+
+const testTree = tree(testArr);
+testTree.build();
+testTree.insert(10);
+testTree.print();
+testTree.remove(9);
+testTree.print();
