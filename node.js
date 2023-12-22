@@ -1,8 +1,8 @@
-function node({ name = null, data = {}, left = null, right = null, count = 0 } = {}) {
+function node({ value = null, data = {}, left = null, right = null, count = 0 } = {}) {
   let _data = data;
   let _left = left;
   let _right = right;
-  let _name = name;
+  let _value = value;
   let _count = count;
 
   const hasDataKey = (key) => Object.keys(_data).includes(key);
@@ -50,11 +50,11 @@ function node({ name = null, data = {}, left = null, right = null, count = 0 } =
     get allData() {
       return _data;
     },
-    get name() {
-      return _name;
+    get value() {
+      return _value;
     },
-    set name(newName) {
-      _name = newName;
+    set value(newValue) {
+      _value = newValue;
     },
     get count() {
       return _count;
@@ -62,6 +62,10 @@ function node({ name = null, data = {}, left = null, right = null, count = 0 } =
     set count(newCount) {
       _count = newCount;
     },
+    get isNode() {
+      return true;
+    },
+
     addData,
     removeData,
     getData,
