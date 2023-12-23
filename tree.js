@@ -5,16 +5,17 @@ import { queue } from "./queue.js";
 function tree(arr = []) {
   let _root = null;
   let _arr = buildNodeArray(arr);
-
   // Returned wrapper functions
   const build = () => (_root = buildTree(_arr, 0, _arr.length - 1));
   const print = () => prettyPrint(_root);
   const insert = (value) => insertNode(value.isNode ? value : treeNode({ value }), _root);
   const find = (value) => findNode(value).node;
   const remove = (value) => removeNode(value);
-  const depth = (value) => findNode(value).depth;
-  const height = (value) => heightOfNode(findNode(value).node);
+  const depth = (value) => (value ? findNode(value).depth : findNode(_root.value).depth);
+  const height = (value) => (value ? heightOfNode(findNode(value).node) : heightOfNode(_root));
   const isBalanced = () => checkBalance(_root);
+  const iLevelOrder = (fn, startValue) => iterativeLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const rLevelOrder = (fn, startValue) => recursiveLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
   // Primary Functions
   const buildTree = (arr, lhs, rhs) => {
     if (lhs > rhs) return null;
@@ -113,9 +114,35 @@ function tree(arr = []) {
     else if (currentNode.right && value > currentNode.value) return findParentNode(value, currentNode.right);
   };
 
+  const validateCallback = (fn) => fn && typeof fn === "function";
+
   // Traversal Functions
-  const iterativeLevelOrder = (fn) => {};
-  const recursiveLevelOrder = (fn) => {};
+  const iterativeLevelOrder = (fn = void 0, start) => {
+    if (!validateCallback(fn)) fn = void 0;
+    const q = queue();
+    if (start) q.enqueue(start);
+    while (!q.isEmpty) {
+      let currentNode = q.dequeue();
+      fn(currentNode);
+      if (currentNode.left) q.enqueue(currentNode.left);
+      if (currentNode.right) q.enqueue(currentNode.right);
+    }
+  };
+  const recursiveLevelOrder = (fn, start) => {
+    if (!validateCallback(fn)) fn = void 0;
+    const processLevel = (node, level) => {
+      if (node === null) return;
+      if (level === 1) fn(node);
+      else {
+        processLevel(node.left, level - 1);
+        processLevel(node.right, level - 1);
+      }
+    };
+
+    for (let level = 1; level <= height(start.value) + 1; level++) {
+      processLevel(start, level);
+    }
+  };
   const inOrder = (fn) => {};
   const preOrder = (fn) => {};
   const postOrder = (fn) => {};
@@ -140,6 +167,8 @@ function tree(arr = []) {
   };
   const rebalance = () => {};
 
+  if (_arr.length > 0 && _root === null) build();
+
   return {
     get root() {
       return _root;
@@ -158,5 +187,9 @@ function tree(arr = []) {
     height,
     depth,
     isBalanced,
+    iLevelOrder,
+    rLevelOrder,
   };
 }
+
+export { tree };
