@@ -1,4 +1,4 @@
-import { node as queueNode } from "./nodes/queueNode.js";
+import { node as queueNode } from "./nodes/node.js";
 
 const queue = () => {
   let _head = null;
@@ -30,7 +30,7 @@ const queue = () => {
     return output;
   };
   return {
-    get length() {
+    get size() {
       return _size;
     },
     get peek() {

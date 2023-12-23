@@ -1,6 +1,7 @@
 import { node as treeNode } from "./nodes/treeNode.js";
 import { mergeSort } from "./mergeSort.js";
 import { queue } from "./queue.js";
+import { stack } from "./stack.js";
 
 function tree(arr = []) {
   let _root = null;
@@ -16,6 +17,20 @@ function tree(arr = []) {
   const isBalanced = () => checkBalance(_root);
   const iLevelOrder = (fn, startValue) => iterativeLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
   const rLevelOrder = (fn, startValue) => recursiveLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const rPreOrder = (fn, startValue) => recursivePreOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const rInOrder = (fn, startValue) => recursiveInOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const rPostOrder = (fn, startValue) => recursivePostOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const iPreOrder = (fn, startValue) => iterativePreOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const iInOrder = (fn, startValue) => iterativeInOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const iPostOrder = (fn, startValue) => iterativePostOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const rebalance = () => {
+    if (!isBalanced()) {
+      const arr = [];
+      iInOrder((node) => arr.push(node));
+      _arr = arr;
+      build();
+    }
+  };
   // Primary Functions
   const buildTree = (arr, lhs, rhs) => {
     if (lhs > rhs) return null;
@@ -114,11 +129,8 @@ function tree(arr = []) {
     else if (currentNode.right && value > currentNode.value) return findParentNode(value, currentNode.right);
   };
 
-  const validateCallback = (fn) => fn && typeof fn === "function";
-
   // Traversal Functions
-  const iterativeLevelOrder = (fn = void 0, start) => {
-    if (!validateCallback(fn)) fn = void 0;
+  const iterativeLevelOrder = (fn, start) => {
     const q = queue();
     if (start) q.enqueue(start);
     while (!q.isEmpty) {
@@ -129,7 +141,6 @@ function tree(arr = []) {
     }
   };
   const recursiveLevelOrder = (fn, start) => {
-    if (!validateCallback(fn)) fn = void 0;
     const processLevel = (node, level) => {
       if (node === null) return;
       if (level === 1) fn(node);
@@ -138,14 +149,86 @@ function tree(arr = []) {
         processLevel(node.right, level - 1);
       }
     };
-
     for (let level = 1; level <= height(start.value) + 1; level++) {
       processLevel(start, level);
     }
   };
-  const inOrder = (fn) => {};
-  const preOrder = (fn) => {};
-  const postOrder = (fn) => {};
+  // root - left - right
+  const recursivePreOrder = (fn, node) => {
+    const traverse = (node) => {
+      if (node === null) return;
+      else {
+        fn(node);
+        traverse(node.left);
+        traverse(node.right);
+      }
+    };
+    traverse(node);
+  };
+  const iterativePreOrder = (fn, start) => {
+    const s = stack();
+    s.push(start);
+    while (!s.isEmpty) {
+      let node = s.pop();
+      fn(node);
+      if (node.right) s.push(node.right);
+      if (node.left) s.push(node.left);
+    }
+  };
+  // left - root - right
+  const recursiveInOrder = (fn, start) => {
+    const traverse = (node) => {
+      if (node === null) return;
+      else {
+        traverse(node.left);
+        fn(node);
+        traverse(node.right);
+      }
+    };
+    traverse(start);
+  };
+  const iterativeInOrder = (fn, start) => {
+    const s = stack();
+    const pushAllLeft = (node) => {
+      while (node) {
+        s.push(node);
+        node = node.left;
+      }
+    };
+    pushAllLeft(start);
+    while (!s.isEmpty) {
+      let node = s.pop();
+      fn(node);
+      if (node.right) pushAllLeft(node.right);
+    }
+  };
+  // left - right - root
+  const recursivePostOrder = (fn, start) => {
+    const traverse = (node) => {
+      if (node === null) return;
+      else {
+        traverse(node.left);
+        traverse(node.right);
+        fn(node);
+      }
+    };
+    traverse(start);
+  };
+  const iterativePostOrder = (fn, start) => {
+    const s = stack();
+    let lastVisited = null;
+    s.push(start);
+    while (!s.isEmpty) {
+      let current = s.top;
+      if (current.left && current.left !== lastVisited && current.right !== lastVisited) s.push(current.left);
+      else if (current.right && current.right !== lastVisited) s.push(current.right);
+      else {
+        fn(current);
+        lastVisited = current;
+        s.pop();
+      }
+    }
+  };
 
   //
   const heightOfNode = (node) => {
@@ -165,7 +248,6 @@ function tree(arr = []) {
       else return checkBalance(root.left) && checkBalance(root.right);
     }
   };
-  const rebalance = () => {};
 
   if (_arr.length > 0 && _root === null) build();
 
@@ -189,6 +271,13 @@ function tree(arr = []) {
     isBalanced,
     iLevelOrder,
     rLevelOrder,
+    rPreOrder,
+    rInOrder,
+    rPostOrder,
+    iPreOrder,
+    iInOrder,
+    iPostOrder,
+    rebalance,
   };
 }
 
