@@ -52,13 +52,16 @@ function tree(arr = []) {
    *  - All functions accept a callback function which is executed on each node and
    *    a node value to start the traversal at (defaults to root).
    */
-  const iLevelOrder = (fn, startValue) => iterativeLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
   const rLevelOrder = (fn, startValue) => recursiveLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+  const iLevelOrder = (fn, startValue) => iterativeLevelOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+
   const rPreOrder = (fn, startValue) => recursivePreOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
-  const rInOrder = (fn, startValue) => recursiveInOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
-  const rPostOrder = (fn, startValue) => recursivePostOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
   const iPreOrder = (fn, startValue) => iterativePreOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+
+  const rInOrder = (fn, startValue) => recursiveInOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
   const iInOrder = (fn, startValue) => iterativeInOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
+
+  const rPostOrder = (fn, startValue) => recursivePostOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
   const iPostOrder = (fn, startValue) => iterativePostOrder(fn ? fn : void 0, startValue ? find(startValue) : _root);
 
   // Primary Functions
